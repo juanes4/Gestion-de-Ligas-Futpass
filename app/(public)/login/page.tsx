@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { API_URL } from "@/lib/api"
 
 export default function LoginPage() {
   const [username, setUsername] = useState("")
@@ -20,7 +21,7 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/login", {
+      const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
