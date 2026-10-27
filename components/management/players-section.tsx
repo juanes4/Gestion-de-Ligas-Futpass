@@ -39,7 +39,7 @@ export function PlayersSection({ players, teams, loading, error, searchQuery, on
     if (!editPlayer) return
     const errors: Record<string, string> = {}
     if (!editPlayer.name.trim()) errors.name = "Name is required"
-    if (editPlayer.age < 15 || editPlayer.age > 50) errors.age = "Age must be 15–50"
+    if (editPlayer.age < 15 || editPlayer.age > 50) errors.age = "Age must be a number between 15 and 50"
     if (!editPlayer.position) errors.position = "Position is required"
     if (Object.keys(errors).length > 0) { setEditErrors(errors); return }
 

@@ -10,6 +10,12 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import type { League, LeagueRoundsResponse, Standing, RoundMatch, MatchResultPayload, ILeaguesReader, IMatchesResultWriter } from "@/lib/api"
 import { validateHalftimeScore } from "@/lib/validation/matchValidator"
 
+const NETWORK_ERROR_MSG = "Unable to reach the server. Please check your connection or try again later."
+
+function isNetworkError(err: unknown): boolean {
+  return err instanceof TypeError && err.message.toLowerCase().includes("fetch")
+}
+
 export type MatchInput = {
   s1: string; s2: string; ht1: string; ht2: string
   venue: string; referee: string; scheduled_at: string
@@ -104,8 +110,8 @@ export function useLeagueMatchState(
       }
       setInputs(newInputs)
       setInputErrors({})
-    } catch {
-      setError("Could not load the league data. Please try again.")
+    } catch (err) {
+      setError(isNetworkError(err) ? NETWORK_ERROR_MSG : "Could not load the league data. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -159,7 +165,7 @@ export function useLeagueMatchState(
     } catch (err) {
       setInputErrors((prev) => ({
         ...prev,
-        [match.id]: err instanceof Error ? err.message : "Could not save the result. Please try again.",
+        [match.id]: isNetworkError(err) ? NETWORK_ERROR_MSG : err instanceof Error ? err.message : "Could not save the result. Please try again.",
       }))
     } finally {
       setSavingId(null)
@@ -173,7 +179,7 @@ export function useLeagueMatchState(
       await leaguesApi.advanceRound(selectedId)
       await loadLeague(selectedId)
     } catch (err) {
-      setAdvanceError(err instanceof Error ? err.message : "Could not advance to the next round. Please try again.")
+      setAdvanceError(isNetworkError(err) ? NETWORK_ERROR_MSG : err instanceof Error ? err.message : "Could not advance to the next round. Please try again.")
     } finally {
       setAdvancing(false)
     }

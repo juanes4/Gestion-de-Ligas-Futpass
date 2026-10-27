@@ -150,6 +150,10 @@ def add_player_to_team(team_id):
 @api.delete("/teams/<int:team_id>")
 def delete_team(team_id):
     conn = get_db()
+    conn.execute(
+        "DELETE FROM matches WHERE team1_id = ? OR team2_id = ? OR winner_id = ?",
+        (team_id, team_id, team_id),
+    )
     conn.execute("DELETE FROM teams WHERE id = ?", (team_id,))
     conn.commit()
     conn.close()
