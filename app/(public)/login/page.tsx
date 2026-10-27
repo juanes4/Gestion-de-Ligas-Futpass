@@ -34,14 +34,18 @@ export default function LoginPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || "Error al iniciar sesión")
+        throw new Error(data.error || "Login failed")
       }
 
       sessionStorage.setItem("userSession", JSON.stringify(data.user))
       router.push("/dashboard")
 
     } catch (err: any) {
-      setError(err.message)
+      if (err instanceof TypeError && err.message.toLowerCase().includes("fetch")) {
+        setError("Unable to reach the server. Please check your connection or try again later.")
+      } else {
+        setError(err.message)
+      }
     } finally {
       setLoading(false)
     }
@@ -49,14 +53,12 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
-      {/* Cambiamos el contenedor por un tag <form> */}
       <form onSubmit={handleLogin} className="w-full max-w-sm bg-background border rounded-xl p-6 shadow-sm space-y-6">
         <div className="text-center">
-          <h2 className="text-2xl font-bold">Iniciar Sesión</h2>
-          <p className="text-sm text-muted-foreground mt-1">Solo para personal autorizado</p>
+          <h2 className="text-2xl font-bold">Log In</h2>
+          <p className="text-sm text-muted-foreground mt-1">Authorized personnel only</p>
         </div>
 
-        {/* Alerta de error visual */}
         {error && (
           <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-lg border border-destructive/20 text-center font-medium">
             {error}
@@ -65,21 +67,21 @@ export default function LoginPage() {
 
         <div className="space-y-4">
           <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">Usuario</label>
-            <Input 
-              type="text" 
-              placeholder="admin@liga.com" 
+            <label className="text-xs font-medium text-muted-foreground">Username</label>
+            <Input
+              type="text"
+              placeholder="admin@league.com"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
-          
+
           <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">Contraseña</label>
-            <Input 
-              type="password" 
-              placeholder="••••••••••••" 
+            <label className="text-xs font-medium text-muted-foreground">Password</label>
+            <Input
+              type="password"
+              placeholder="••••••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -87,14 +89,13 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Botón tipo submit controlado por el estado de carga */}
         <Button type="submit" className="w-full" size="lg" disabled={loading}>
-          {loading ? "Verificando..." : "Ingresar al Dashboard"}
+          {loading ? "Verifying..." : "Go to Dashboard"}
         </Button>
 
         <div className="text-center">
           <Link href="/" className="text-sm text-muted-foreground hover:underline">
-            ← Volver al Inicio
+            ← Back to Home
           </Link>
         </div>
       </form>
