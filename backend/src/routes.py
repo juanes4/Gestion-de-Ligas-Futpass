@@ -660,7 +660,7 @@ def registrar_usuario(name, email, password):
     hash_texto = password_hash.decode('utf-8')
 
     # 3. CONECTAR A LA BASE DE DATOS E INSERTAR
-    conn = sqlite3.connect("championship.db")
+    conn = get_db()
     cursor = conn.cursor()
 
     try:
@@ -687,7 +687,3 @@ def registrar_usuario(name, email, password):
         
     finally:
         conn.close()
-
-# --- Ejemplo para crear tu cuenta de Administrador de prueba ---
-resultado = registrar_usuario("Administrador","admin@footpass.com", "FootPass2026")
-print(resultado["message"])
