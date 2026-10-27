@@ -34,7 +34,14 @@ __pycache__/
 .eggs/
 
 # Databases
+backend/usuarios.db
 
+# Archivos subidos en tiempo de ejecución (logos y fotos)
+public/uploads/
+
+# Gestor de paquetes: el proyecto usa npm (package-lock.json)
+pnpm-lock.yaml
+yarn.lock
 
 # Logs
 *.log
